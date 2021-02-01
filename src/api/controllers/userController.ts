@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 import UserService from '../../domain/services/UserService';
 import { Inject, Service } from 'typedi';
+import ApiResponse, { ResponseStatus } from '../responses/ApiResponse';
 
 @Service()
 export class UserController {
@@ -12,23 +13,20 @@ export class UserController {
     const id = req.params.id;
 
     const user = await this._userService.findUserById(id);
-    console.log(user);
-    res.status(200).json({
-      data: user,
-    });
+    res.status(ResponseStatus.SUCCESS).json(ApiResponse.SuccessResponse('User Found!', user));
   }
 
   public async signUpUser(req: Request, res: Response) {
     const user = req.body;
     try {
       const userCreated = await this._userService.signUpUser(user);
-      res.status(201).json({
-        data: userCreated,
-      });
+      res
+        .status(ResponseStatus.CREATED)
+        .json(ApiResponse.SuccessResponse('Sucessfull sign up!', userCreated));
     } catch (error) {
-      res.status(400).json({
-        error: error.message,
-      });
+      res
+        .status(ResponseStatus.BAD_REQUEST)
+        .json(ApiResponse.FailureResponse(error.message, ResponseStatus.BAD_REQUEST, error));
     }
   }
 }

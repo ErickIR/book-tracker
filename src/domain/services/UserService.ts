@@ -11,7 +11,6 @@ export default class UserService {
     const checkUserEmail = await this._userRepo.findByEmail(user.email);
 
     if (checkUserEmail) {
-      console.log(checkUserEmail);
       throw new Error('Invalid user email.');
     }
 
